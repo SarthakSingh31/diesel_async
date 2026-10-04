@@ -41,6 +41,18 @@ impl fmt::Display for PoolError {
 
 impl std::error::Error for PoolError {}
 
+impl From<diesel::result::ConnectionError> for PoolError {
+    fn from(value: diesel::result::ConnectionError) -> Self {
+        PoolError::ConnectionError(value)
+    }
+}
+
+impl From<diesel::result::Error> for PoolError {
+    fn from(value: diesel::result::Error) -> Self {
+        PoolError::QueryError(value)
+    }
+}
+
 /// Type of the custom setup closure passed to [`ManagerConfig::custom_setup`]
 pub type SetupCallback<C> =
     Box<dyn Fn(&str) -> BoxFuture<diesel::ConnectionResult<C>> + Send + Sync>;
