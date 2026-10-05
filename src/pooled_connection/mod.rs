@@ -39,7 +39,14 @@ impl fmt::Display for PoolError {
     }
 }
 
-impl std::error::Error for PoolError {}
+impl std::error::Error for PoolError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            PoolError::ConnectionError(connection_error) => Some(connection_error),
+            PoolError::QueryError(error) => Some(error),
+        }
+    }
+}
 
 impl From<diesel::result::ConnectionError> for PoolError {
     fn from(value: diesel::result::ConnectionError) -> Self {
